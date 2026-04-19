@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CodeSync.CollabService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be87375b6321eb9097bbb6fee47b2789e5ef036d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2f428812ca35d96393a4f578b6f5c027a41b5d65")]
 [assembly: System.Reflection.AssemblyProductAttribute("CodeSync.CollabService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CodeSync.CollabService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

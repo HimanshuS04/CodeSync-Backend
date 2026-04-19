@@ -1,2 +1,5 @@
 .github/
 graphify-out/
+bin/
+obj/
+.DS_Store
