@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CodeSync.AuthService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2f428812ca35d96393a4f578b6f5c027a41b5d65")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce0c61ef2fe9b519d17e63faedc1020f398c1883")]
 [assembly: System.Reflection.AssemblyProductAttribute("CodeSync.AuthService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CodeSync.AuthService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

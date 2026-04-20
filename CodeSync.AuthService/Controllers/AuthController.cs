@@ -17,12 +17,15 @@ namespace CodeSync.AuthService.Controllers
             _authService = authService;
         }
 
+        // Public endpoints
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        public async Task<IActionResult> Register(
+            [FromBody] RegisterDto dto)
         {
             try
             {
-                var result = await _authService.RegisterAsync(dto);
+                var result = await _authService
+                    .RegisterAsync(dto);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -32,11 +35,13 @@ namespace CodeSync.AuthService.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        public async Task<IActionResult> Login(
+            [FromBody] LoginDto dto)
         {
             try
             {
-                var result = await _authService.LoginAsync(dto);
+                var result = await _authService
+                    .LoginAsync(dto);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -46,7 +51,8 @@ namespace CodeSync.AuthService.Controllers
         }
 
         [HttpPost("google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] GoogleAuthDto dto)
+        public async Task<IActionResult> GoogleLogin(
+            [FromBody] GoogleAuthDto dto)
         {
             try
             {
@@ -60,6 +66,8 @@ namespace CodeSync.AuthService.Controllers
             }
         }
 
+        // Protected endpoints
+        // UserId extracted from JWT claims
         [HttpGet("profile")]
         [Authorize]
         public async Task<IActionResult> GetProfile()
@@ -67,7 +75,8 @@ namespace CodeSync.AuthService.Controllers
             try
             {
                 var userId = GetUserId();
-                var user = await _authService.GetProfileAsync(userId);
+                var user = await _authService
+                    .GetProfileAsync(userId);
                 return Ok(user);
             }
             catch (Exception ex)
@@ -102,8 +111,9 @@ namespace CodeSync.AuthService.Controllers
             try
             {
                 var userId = GetUserId();
-                await _authService.ChangePasswordAsync(userId, dto);
-                return Ok(new { message = "Password changed successfully" });
+                await _authService
+                    .ChangePasswordAsync(userId, dto);
+                return Ok(new { message = "Password changed" });
             }
             catch (Exception ex)
             {
@@ -111,13 +121,15 @@ namespace CodeSync.AuthService.Controllers
             }
         }
 
-        [HttpGet("search")]
+        [HttpPost("search")]
         [Authorize]
-        public async Task<IActionResult> SearchUsers([FromQuery] string q)
+        public async Task<IActionResult> SearchUsers(
+            [FromBody] SearchDto dto)
         {
             try
             {
-                var users = await _authService.SearchUsersAsync(q);
+                var users = await _authService
+                    .SearchUsersAsync(dto.Query);
                 return Ok(users);
             }
             catch (Exception ex)
@@ -126,14 +138,15 @@ namespace CodeSync.AuthService.Controllers
             }
         }
 
-        // Admin
+        // Admin endpoints
         [HttpGet("admin/users")]
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
             {
-                var users = await _authService.GetAllUsersAsync();
+                var users = await _authService
+                    .GetAllUsersAsync();
                 return Ok(users);
             }
             catch (Exception ex)
@@ -142,13 +155,15 @@ namespace CodeSync.AuthService.Controllers
             }
         }
 
-        [HttpPut("admin/users/{id}/suspend")]
+        [HttpPut("admin/users/suspend")]
         [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> SuspendUser(Guid id)
+        public async Task<IActionResult> SuspendUser(
+            [FromBody] UserIdDto dto)
         {
             try
             {
-                await _authService.SuspendUserAsync(id);
+                await _authService
+                    .SuspendUserAsync(dto.UserId);
                 return Ok(new { message = "User suspended" });
             }
             catch (Exception ex)
@@ -157,13 +172,15 @@ namespace CodeSync.AuthService.Controllers
             }
         }
 
-        [HttpPut("admin/users/{id}/reactivate")]
+        [HttpPut("admin/users/reactivate")]
         [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> ReactivateUser(Guid id)
+        public async Task<IActionResult> ReactivateUser(
+            [FromBody] UserIdDto dto)
         {
             try
             {
-                await _authService.ReactivateUserAsync(id);
+                await _authService
+                    .ReactivateUserAsync(dto.UserId);
                 return Ok(new { message = "User reactivated" });
             }
             catch (Exception ex)
@@ -172,7 +189,7 @@ namespace CodeSync.AuthService.Controllers
             }
         }
 
-        // Helper
+        // Helper - get UserId from JWT claims
         private Guid GetUserId() => Guid.Parse(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
     }

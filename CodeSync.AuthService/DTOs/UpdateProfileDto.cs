@@ -5,10 +5,10 @@ namespace CodeSync.AuthService.DTOs
     public class UpdateProfileDto
     {
         [RegularExpression(@"^[a-zA-Z0-9_]{3,20}$",
-            ErrorMessage = "Username must be 3-20 characters, letters, numbers and underscore only")]
+            ErrorMessage = "3-20 chars, letters/numbers/underscore")]
         public string? Username { get; set; }
 
-        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [EmailAddress]
         public string? Email { get; set; }
     }
 }
