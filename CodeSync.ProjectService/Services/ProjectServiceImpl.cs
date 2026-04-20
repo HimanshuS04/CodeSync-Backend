@@ -141,19 +141,46 @@ namespace CodeSync.ProjectService.Services
             await _cache.RemoveAsync(PublicProjectsKey);
         }
 
-        public async Task StarProjectAsync(Guid projectId)
+        public async Task<bool> ToggleStarAsync(
+            Guid projectId, Guid userId)
         {
             var project = await _repo.FindByIdAsync(projectId)
                 ?? throw new Exception("Project not found");
 
-            project.StarCount++;
-            await _repo.UpdateAsync(project);
+            var existing = await _repo.FindStarAsync(
+                projectId, userId);
 
-            // Invalidate caches
-            await _cache.RemoveAsync($"project:{projectId}");
-            await _cache.RemoveAsync(PublicProjectsKey);
+            if (existing != null)
+            {
+                // Unstar
+                await _repo.RemoveStarAsync(existing);
+                project.StarCount = Math.Max(0, project.StarCount - 1);
+                await _repo.UpdateAsync(project);
+
+                await _cache.RemoveAsync($"project:{projectId}");
+                await _cache.RemoveAsync(PublicProjectsKey);
+
+                return false; // unstarred
+            }
+            else
+            {
+                // Star
+                await _repo.AddStarAsync(new StarredProject
+                {
+                    ProjectId = projectId,
+                    UserId = userId
+                });
+                project.StarCount++;
+                await _repo.UpdateAsync(project);
+
+                await _cache.RemoveAsync($"project:{projectId}");
+                await _cache.RemoveAsync(PublicProjectsKey);
+
+                return true; // starred
+            }
         }
 
+    public async Task<List<Guid>> GetStarredProjectIdsAsync(Guid userId)=> await _repo.GetStarredProjectIdsAsync(userId);
         public async Task AddMemberAsync(
             Guid projectId, Guid ownerId, Guid newUserId)
         {

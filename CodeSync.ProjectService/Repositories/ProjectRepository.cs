@@ -90,5 +90,30 @@ namespace CodeSync.ProjectService.Repositories
                 .FirstOrDefaultAsync(m =>
                     m.ProjectId == projectId
                     && m.UserId == userId);
+        public async Task<StarredProject?> FindStarAsync(
+            Guid projectId, Guid userId)
+            => await _context.StarredProjects
+                .FirstOrDefaultAsync(s =>
+                    s.ProjectId == projectId
+                    && s.UserId == userId);
+
+        public async Task AddStarAsync(StarredProject star)
+        {
+            _context.StarredProjects.Add(star);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveStarAsync(StarredProject star)
+        {
+            _context.StarredProjects.Remove(star);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Guid>> GetStarredProjectIdsAsync(
+            Guid userId)
+            => await _context.StarredProjects
+                .Where(s => s.UserId == userId)
+                .Select(s => s.ProjectId)
+                .ToListAsync();
     }
 }

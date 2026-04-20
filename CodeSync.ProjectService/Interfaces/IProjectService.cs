@@ -13,7 +13,8 @@ namespace CodeSync.ProjectService.Interfaces
         Task<ProjectResponseDto> UpdateProjectAsync(
             Guid projectId, Guid userId, UpdateProjectDto dto);
         Task DeleteProjectAsync(Guid projectId, Guid userId);
-        Task StarProjectAsync(Guid projectId);
+        Task<bool> ToggleStarAsync(Guid projectId, Guid userId);
+        Task<List<Guid>> GetStarredProjectIdsAsync(Guid userId);
         Task AddMemberAsync(Guid projectId, Guid ownerId, Guid newUserId);
         Task RemoveMemberAsync(Guid projectId, Guid ownerId, Guid userId);
     }

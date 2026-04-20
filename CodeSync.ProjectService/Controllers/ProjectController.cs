@@ -146,13 +146,37 @@ namespace CodeSync.ProjectService.Controllers
         // POST /api/projects/star
         [HttpPost("star")]
         [Authorize]
-        public async Task<IActionResult> Star(
+        public async Task<IActionResult> ToggleStar(
             [FromBody] ProjectIdDto dto)
         {
             try
             {
-                await _service.StarProjectAsync(dto.ProjectId);
-                return Ok(new { message = "Starred" });
+                var userId = GetUserId();
+                var isStarred = await _service
+                    .ToggleStarAsync(dto.ProjectId, userId);
+                return Ok(new
+                {
+                    isStarred,
+                    message = isStarred ? "Starred" : "Unstarred"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // GET /api/projects/starred
+        [HttpGet("starred")]
+        [Authorize]
+        public async Task<IActionResult> GetStarredIds()
+        {
+            try
+            {
+                var userId = GetUserId();
+                var ids = await _service
+                    .GetStarredProjectIdsAsync(userId);
+                return Ok(ids);
             }
             catch (Exception ex)
             {

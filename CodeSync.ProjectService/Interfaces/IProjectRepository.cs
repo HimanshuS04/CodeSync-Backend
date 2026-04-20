@@ -15,5 +15,12 @@ namespace CodeSync.ProjectService.Interfaces
         Task RemoveMemberAsync(Guid projectId, Guid userId);
         Task<ProjectMember?> FindMemberAsync(
             Guid projectId, Guid userId);
+
+        // Star methods
+        Task<StarredProject?> FindStarAsync(
+            Guid projectId, Guid userId);
+        Task AddStarAsync(StarredProject star);
+        Task RemoveStarAsync(StarredProject star);
+        Task<List<Guid>> GetStarredProjectIdsAsync(Guid userId);
     }
 }
