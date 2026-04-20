@@ -1,9 +1,0 @@
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.csproj.AssemblyReference.cache
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/rpswa.dswa.cache.json
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.GeneratedMSBuildEditorConfig.editorconfig
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.AssemblyInfoInputs.cache
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.AssemblyInfo.cs
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.csproj.CoreCompileInputs.cache
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.MvcApplicationPartsAssemblyInfo.cs
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.MvcApplicationPartsAssemblyInfo.cache
-/Users/himanshusingh/Downloads/CodeSync/codesync-backend/CodeSync.AuthService/obj/Debug/net10.0/CodeSync.AuthService.sourcelink.json
