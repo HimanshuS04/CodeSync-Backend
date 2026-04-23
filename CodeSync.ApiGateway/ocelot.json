@@ -71,6 +71,15 @@
       ],
       "UpstreamPathTemplate": "/api/notifications/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/hubs/collab",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5003 }
+      ],
+      "UpstreamPathTemplate": "/hubs/collab",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     }
   ],
   "GlobalConfiguration": {

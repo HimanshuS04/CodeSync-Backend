@@ -1,6 +1,0 @@
-@CodeSync.AuthService_HostAddress = http://localhost:5193
-
-GET {{CodeSync.AuthService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
