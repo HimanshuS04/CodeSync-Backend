@@ -59,8 +59,7 @@ namespace CodeSync.CollabService.OT
         }
 
         // Apply operation to document string
-        public string Apply(
-            string document, OTOperation op)
+        public string Apply(string document, OTOperation op)
         {
             try
             {
@@ -73,17 +72,22 @@ namespace CodeSync.CollabService.OT
                 else if (op.Type == "DELETE")
                 {
                     var pos = Math.Clamp(
-                        op.Position, 0, document.Length);
-                    var len = Math.Min(
-                        op.Text.Length,
-                        document.Length - pos);
+                        op.Position, 0,
+                        Math.Max(0, document.Length - 1));
+                    var len = op.Text.Length;
+
+                    // Make sure we don't delete beyond document
+                    if (pos + len > document.Length)
+                        len = document.Length - pos;
+
                     if (len <= 0) return document;
+
                     return document.Remove(pos, len);
                 }
             }
             catch
             {
-                // If OT fails return document unchanged
+                // If anything fails return unchanged
             }
 
             return document;

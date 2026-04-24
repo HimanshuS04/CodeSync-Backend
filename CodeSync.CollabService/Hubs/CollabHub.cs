@@ -60,6 +60,10 @@ namespace CodeSync.CollabService.Hubs
             string sessionId, OTOperation operation)
         {
             var sessionGuid = Guid.Parse(sessionId);
+            var userId = GetUserId();
+
+            // Set userId on operation
+            operation.UserId = userId;
 
             // Get current document
             var document = await _redis
@@ -73,9 +77,8 @@ namespace CodeSync.CollabService.Hubs
             await _redis.SetDocumentAsync(
                 sessionGuid, newDocument);
 
-            // Broadcast operation to ALL users
-            // including sender (so all stay in sync)
-            await Clients.Group(sessionId)
+            // Broadcast to OTHERS only (not sender)
+            await Clients.OthersInGroup(sessionId)
                 .SendAsync("ReceiveEdit", operation);
         }
 
