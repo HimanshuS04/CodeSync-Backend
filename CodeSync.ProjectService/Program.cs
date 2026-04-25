@@ -32,6 +32,8 @@ builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IFileService, FileServiceImpl>();
 builder.Services.AddScoped<ISnapshotRepository, SnapshotRepository>();
 builder.Services.AddScoped<IVersionService, VersionServiceImpl>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentService, CommentServiceImpl>();
 
 // 4. JWT - Authorize ONLY (no generation)
 // Uses same secret key as AuthService
