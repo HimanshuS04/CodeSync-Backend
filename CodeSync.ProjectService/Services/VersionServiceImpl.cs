@@ -11,17 +11,22 @@ namespace CodeSync.ProjectService.Services
         private readonly ISnapshotRepository _snapshotRepo;
         private readonly IFileRepository _fileRepo;
 
+        private readonly IProjectRepository _projectRepo;
+        private readonly NotificationClient _notificationClient;
+
         public VersionServiceImpl(
             ISnapshotRepository snapshotRepo,
-            IFileRepository fileRepo)
+            IFileRepository fileRepo,
+            IProjectRepository projectRepo,
+            NotificationClient notificationClient)
         {
             _snapshotRepo = snapshotRepo;
             _fileRepo = fileRepo;
+            _projectRepo = projectRepo;
+            _notificationClient = notificationClient;
         }
 
-        public async Task<SnapshotResponseDto>
-            CreateSnapshotAsync(
-                Guid userId, CreateSnapshotDto dto)
+        public async Task<SnapshotResponseDto> CreateSnapshotAsync(Guid userId, CreateSnapshotDto dto)
         {
             // Get latest snapshot for parent chain
             var latest = await _snapshotRepo
@@ -42,19 +47,48 @@ namespace CodeSync.ProjectService.Services
             };
 
             await _snapshotRepo.CreateAsync(snapshot);
+            var project = await _projectRepo.FindByIdAsync(dto.ProjectId);
+            if (project != null && project.OwnerId != userId)
+            {
+                await _notificationClient.CreateAsync(new
+                {
+                    RecipientId = project.OwnerId,
+                    ActorId = userId,
+                    Type = "SNAPSHOT_CREATED",
+                    Title = "New snapshot",
+                    Message = $"A new snapshot was created: '{dto.Message}'",
+                    RelatedId = snapshot.Id.ToString(),
+                    RelatedType = "SNAPSHOT"
+                });
+            }
             return MapToDto(snapshot);
         }
 
-        public async Task<List<SnapshotResponseDto>>
-            GetFileHistoryAsync(Guid fileId)
+        public async Task<List<SnapshotResponseDto>> GetFileHistoryAsync(Guid fileId, Guid userId)
         {
+            // Get file to find projectId
+            var file = await _fileRepo.FindByIdAsync(fileId)
+                ?? throw new Exception("File not found");
+
+            // Check access
+            var project = await _projectRepo
+                .FindByIdAsync(file.ProjectId)
+                ?? throw new Exception("Project not found");
+
+            if (project.OwnerId != userId)
+            {
+                var member = await _projectRepo
+                    .FindMemberAsync(file.ProjectId, userId);
+                if (member == null)
+                    throw new Exception("Access denied");
+            }
+
             var snapshots = await _snapshotRepo
                 .FindByFileIdAsync(fileId);
             return snapshots.Select(MapToDto).ToList();
         }
 
-        public async Task<SnapshotResponseDto>
-            GetSnapshotByIdAsync(int id)
+        public async Task<SnapshotResponseDto> GetSnapshotByIdAsync(int id)
         {
             var snapshot = await _snapshotRepo
                 .FindByIdAsync(id)
@@ -62,9 +96,7 @@ namespace CodeSync.ProjectService.Services
             return MapToDto(snapshot);
         }
 
-        public async Task<SnapshotResponseDto>
-            RestoreSnapshotAsync(
-                Guid userId, int snapshotId)
+        public async Task<SnapshotResponseDto> RestoreSnapshotAsync(Guid userId, int snapshotId)
         {
             // Get old snapshot
             var old = await _snapshotRepo
@@ -98,6 +130,20 @@ namespace CodeSync.ProjectService.Services
             };
 
             await _snapshotRepo.CreateAsync(restored);
+            var project = await _projectRepo.FindByIdAsync(old.ProjectId);
+            if (project != null && project.OwnerId != userId)
+            {
+                await _notificationClient.CreateAsync(new
+                {
+                    RecipientId = project.OwnerId,
+                    ActorId = userId,
+                    Type = "SNAPSHOT_RESTORED",
+                    Title = "Snapshot restored",
+                    Message = $"A file was restored from snapshot #{snapshotId}",
+                    RelatedId = restored.Id.ToString(),
+                    RelatedType = "SNAPSHOT"
+                });
+            }
             return MapToDto(restored);
         }
 

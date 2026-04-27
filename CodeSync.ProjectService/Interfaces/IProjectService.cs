@@ -18,5 +18,7 @@ namespace CodeSync.ProjectService.Interfaces
         Task AddMemberAsync(Guid projectId, Guid ownerId, Guid newUserId);
         Task RemoveMemberAsync(Guid projectId, Guid ownerId, Guid userId);
         Task<string> GetUserRoleAsync(Guid projectId, Guid userId);
+        Task AddMemberByUsernameAsync(Guid projectId, Guid ownerId, string username);
+        Task<List<MemberResponseDto>> GetMembersAsync(Guid projectId);
     }
 }

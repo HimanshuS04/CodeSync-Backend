@@ -21,10 +21,10 @@ builder.Services.AddDbContext<CollabDbContext>(options =>
 // 2. Redis + Services
 builder.Services.AddSingleton<RedisService>();
 builder.Services.AddSingleton<OTService>();
-builder.Services.AddScoped<ICollabRepository,
-    CollabRepository>();
-builder.Services.AddScoped<ICollabService,
-    CollabServiceImpl>();
+builder.Services.AddScoped<ICollabRepository,CollabRepository>();
+builder.Services.AddScoped<ICollabService,CollabServiceImpl>();
+builder.Services.AddHttpClient<NotificationClient>();
+builder.Services.AddHttpContextAccessor();
 
 // 3. JWT
 var key = Encoding.UTF8.GetBytes(

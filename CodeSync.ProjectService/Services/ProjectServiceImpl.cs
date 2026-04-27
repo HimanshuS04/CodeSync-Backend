@@ -8,15 +8,18 @@ namespace CodeSync.ProjectService.Services
     {
         private readonly IProjectRepository _repo;
         private readonly ICacheService _cache;
+        private readonly NotificationClient _notificationClient;
 
         private const string PublicProjectsKey = "projects:public";
 
         public ProjectServiceImpl(
             IProjectRepository repo,
-            ICacheService cache)
+            ICacheService cache,
+            NotificationClient notificationClient)
         {
             _repo = repo;
             _cache = cache;
+            _notificationClient=notificationClient;
         }
 
         public async Task<ProjectResponseDto> CreateProjectAsync(
@@ -181,8 +184,7 @@ namespace CodeSync.ProjectService.Services
         }
 
     public async Task<List<Guid>> GetStarredProjectIdsAsync(Guid userId)=> await _repo.GetStarredProjectIdsAsync(userId);
-        public async Task AddMemberAsync(
-            Guid projectId, Guid ownerId, Guid newUserId)
+        public async Task AddMemberAsync(Guid projectId, Guid ownerId, Guid newUserId)
         {
             var project = await _repo.FindByIdAsync(projectId)
                 ?? throw new Exception("Project not found");
@@ -200,6 +202,17 @@ namespace CodeSync.ProjectService.Services
                 ProjectId = projectId,
                 UserId = newUserId,
                 Role = "EDITOR"
+            });
+
+            await _notificationClient.CreateAsync(new
+            {
+                RecipientId = newUserId,
+                ActorId = ownerId,
+                Type = "PROJECT_MEMBER_ADDED",
+                Title = "Added to project",
+                Message = $"You were added to project '{project.Name}'",
+                RelatedId = projectId.ToString(),
+                RelatedType = "PROJECT"
             });
         }
 
@@ -235,6 +248,78 @@ namespace CodeSync.ProjectService.Services
                 return "VIEWER";
 
             return "NONE";
+        }
+        public async Task AddMemberByUsernameAsync(
+    Guid projectId, Guid ownerId, string username)
+{
+    var project = await _repo.FindByIdAsync(projectId)
+        ?? throw new Exception("Project not found");
+
+    if (project.OwnerId != ownerId)
+        throw new Exception("Not authorized");
+
+    // Call AuthService to find user by username
+    try
+    {
+        var response = await _notificationClient
+            ._http.GetAsync(
+                $"http://localhost:5001/api/auth/search?q={username}");
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception("User not found");
+
+        var json = await response.Content.ReadAsStringAsync();
+        var users = System.Text.Json.JsonSerializer
+            .Deserialize<List<UserSearchResult>>(json,
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+        var user = users?.FirstOrDefault(
+            u => u.Username.ToLower() == username.ToLower())
+            ?? throw new Exception(
+                $"User '{username}' not found");
+
+        var existing = await _repo.FindMemberAsync(
+            projectId, user.UserId);
+        if (existing != null)
+            throw new Exception("Already a member");
+
+        await _repo.AddMemberAsync(new ProjectMember
+        {
+            ProjectId = projectId,
+            UserId = user.UserId,
+            Role = "EDITOR"
+        });
+
+        await _notificationClient.CreateAsync(new
+        {
+            RecipientId = user.UserId,
+            ActorId = ownerId,
+            Type = "PROJECT_MEMBER_ADDED",
+            Title = "Added to project",
+            Message = $"You were added to project '{project.Name}'",
+            RelatedId = projectId.ToString(),
+            RelatedType = "PROJECT"
+        });
+        }
+        catch (HttpRequestException)
+        {
+            throw new Exception("Could not reach auth service");
+        }
+    }
+       public async Task<List<MemberResponseDto>> GetMembersAsync(Guid projectId)
+        {
+            var project = await _repo.FindByIdAsync(projectId)
+                ?? throw new Exception("Project not found");
+
+            return project.Members
+                .Select(m => new MemberResponseDto
+                {
+                    UserId = m.UserId,
+                    Role = m.Role
+                }).ToList();
         }
 
         private static ProjectResponseDto MapToDto(Project p) => new()

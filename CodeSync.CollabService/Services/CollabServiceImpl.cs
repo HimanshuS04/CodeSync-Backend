@@ -9,20 +9,24 @@ namespace CodeSync.CollabService.Services
     {
         private readonly ICollabRepository _repo;
         private readonly RedisService _redis;
+        private readonly NotificationClient _notificationClient;
+
+        private readonly IHttpContextAccessor _httpContext;
 
         public CollabServiceImpl(
             ICollabRepository repo,
-            RedisService redis)
+            RedisService redis,
+            NotificationClient notificationClient,
+            IHttpContextAccessor httpContext)
         {
             _repo = repo;
             _redis = redis;
+            _notificationClient = notificationClient;
+            _httpContext = httpContext;
         }
 
-        public async Task<SessionResponseDto>
-            CreateSessionAsync(
-                Guid userId, CreateSessionDto dto)
+        public async Task<SessionResponseDto> CreateSessionAsync(Guid userId, CreateSessionDto dto)
         {
-            // Only owner can create session
             if (dto.OwnerId != userId)
                 throw new Exception(
                     "Only project owner can start session");
@@ -38,7 +42,6 @@ namespace CodeSync.CollabService.Services
 
             await _repo.CreateAsync(session);
 
-            // Add owner as HOST participant
             var hostParticipant = new Participant
             {
                 SessionId = session.SessionId,
@@ -49,23 +52,81 @@ namespace CodeSync.CollabService.Services
             };
             await _repo.AddParticipantAsync(hostParticipant);
 
-            // Store initial document in Redis
             await _redis.SetDocumentAsync(
                 session.SessionId, dto.InitialContent);
 
-            // Add host to Redis participants
             await _redis.AddParticipantAsync(
                 session.SessionId,
                 userId.ToString(),
                 "Host",
                 hostParticipant.Color);
 
+            // Notify owner
+            await _notificationClient.CreateAsync(new
+            {
+                RecipientId = userId,
+                ActorId = userId,
+                Type = "SESSION_STARTED",
+                Title = "Session started",
+                Message = "You started a live collaboration session",
+                RelatedId = session.SessionId.ToString(),
+                RelatedType = "SESSION"
+            });
+
+            // Notify all editors of this project
+            var authHeader = _httpContext.HttpContext?
+                .Request.Headers["Authorization"]
+                .FirstOrDefault() ?? "";
+
+            var members = await _notificationClient
+                .GetProjectMembersAsync(
+                    dto.ProjectId, authHeader);
+
+            // Get project name
+            var projectName = "a project";
+
+            try
+            {
+                var projectResponse = await _notificationClient
+                    ._http.SendAsync(new HttpRequestMessage(
+                        HttpMethod.Get,
+                        $"http://localhost:5002/api/projects/{dto.ProjectId}")
+                    {
+                        Headers = { { "Authorization", authHeader } }
+                    });
+
+                if (projectResponse.IsSuccessStatusCode)
+                {
+                    var projectJson = await projectResponse.Content
+                        .ReadAsStringAsync();
+                    var projectDoc = System.Text.Json.JsonDocument
+                        .Parse(projectJson);
+                    projectName = projectDoc.RootElement
+                        .GetProperty("name").GetString() ?? "a project";
+                }
+            }
+            catch { }
+
+            foreach (var member in members)
+            {
+                if (member.UserId == userId) continue;
+
+                await _notificationClient.CreateAsync(new
+                {
+                    RecipientId = member.UserId,
+                    ActorId = userId,
+                    Type = "SESSION_STARTED",
+                    Title = $"Session started on \"{projectName}\"",
+                    Message = $"A live session was started on project \"{projectName}\"",
+                    RelatedId = session.SessionId.ToString(),
+                    RelatedType = "SESSION"
+                });
+            }
+
             return await MapToDto(session);
         }
 
-        public async Task<SessionResponseDto>
-            JoinSessionAsync(
-                Guid userId, JoinSessionDto dto)
+        public async Task<SessionResponseDto> JoinSessionAsync(Guid userId, JoinSessionDto dto)
         {
             var session = await _repo
                 .FindByIdAsync(dto.SessionId)
@@ -110,6 +171,19 @@ namespace CodeSync.CollabService.Services
                     dto.Username,
                     participant.Color);
             }
+            if (session.OwnerId != userId)
+            {
+                await _notificationClient.CreateAsync(new
+                {
+                    RecipientId = session.OwnerId,
+                    ActorId = userId,
+                    Type = "SESSION_JOINED",
+                    Title = "User joined session",
+                    Message = $"{dto.Username} joined your live session",
+                    RelatedId = session.SessionId.ToString(),
+                    RelatedType = "SESSION"
+                });
+            }
 
             return await MapToDto(session);
         }
@@ -127,6 +201,20 @@ namespace CodeSync.CollabService.Services
 
             await _redis.RemoveParticipantAsync(
                 sessionId, userId.ToString());
+            var session = await _repo.FindByIdAsync(sessionId);
+            if (session != null && session.OwnerId != userId)
+            {
+                await _notificationClient.CreateAsync(new
+                {
+                    RecipientId = session.OwnerId,
+                    ActorId = userId,
+                    Type = "SESSION_LEFT",
+                    Title = "User left session",
+                    Message = $"{participant.Username} left your live session",
+                    RelatedId = sessionId.ToString(),
+                    RelatedType = "SESSION"
+                });
+            }
         }
 
         public async Task EndSessionAsync(
@@ -143,7 +231,20 @@ namespace CodeSync.CollabService.Services
             session.Status = "ENDED";
             session.EndedAt = DateTime.UtcNow;
             await _repo.UpdateAsync(session);
-
+            foreach (var participant in session.Participants
+                .Where(p => p.UserId != userId && p.LeftAt == null))
+            {
+                await _notificationClient.CreateAsync(new
+                {
+                    RecipientId = participant.UserId,
+                    ActorId = userId,
+                    Type = "SESSION_ENDED",
+                    Title = "Session ended",
+                    Message = "The live collaboration session was ended by owner",
+                    RelatedId = sessionId.ToString(),
+                    RelatedType = "SESSION"
+                });
+            }
             await _redis.CleanupSessionAsync(sessionId);
         }
 
