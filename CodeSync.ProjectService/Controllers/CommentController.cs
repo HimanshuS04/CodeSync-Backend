@@ -56,22 +56,23 @@ namespace CodeSync.ProjectService.Controllers
         }
 
         [HttpGet("file/{fileId}")]
-        [Authorize]
-        public async Task<IActionResult> GetByFile(
-            Guid fileId)
-        {
-            try
-            {
-                var result = await _service
-                    .GetByFileAsync(fileId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(
-                    new { message = ex.Message });
-            }
-        }
+[Authorize]
+public async Task<IActionResult> GetByFile(
+    Guid fileId)
+{
+    try
+    {
+        var userId = GetUserId();
+        var result = await _service
+            .GetByFileAsync(fileId, userId);
+        return Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(
+            new { message = ex.Message });
+    }
+}
 
         [HttpPut("resolve")]
         [Authorize]

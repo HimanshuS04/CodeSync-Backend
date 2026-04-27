@@ -239,6 +239,40 @@ namespace CodeSync.ProjectService.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        // POST /api/projects/members/add-by-username
+        [HttpPost("members/add-by-username")]
+        [Authorize]
+        public async Task<IActionResult> AddMemberByUsername(
+            [FromBody] AddMemberByUsernameDto dto)
+        {
+            try
+            {
+                var ownerId = GetUserId();
+                await _service.AddMemberByUsernameAsync(
+                    dto.ProjectId, ownerId, dto.Username);
+                return Ok(new { message = "Member added" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        [HttpGet("members/{projectId}")]
+        [Authorize]
+        public async Task<IActionResult> GetMembers(Guid projectId)
+        {
+            try
+            {
+                var members = await _service
+                    .GetMembersAsync(projectId);
+                return Ok(members);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message });
+            }
+        }
 
         private Guid GetUserId() => Guid.Parse(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

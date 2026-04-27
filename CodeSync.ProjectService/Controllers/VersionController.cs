@@ -43,8 +43,9 @@ namespace CodeSync.ProjectService.Controllers
         {
             try
             {
+                var userId = GetUserId();
                 var result = await _service
-                    .GetFileHistoryAsync(fileId);
+                    .GetFileHistoryAsync(fileId, userId);
                 return Ok(result);
             }
             catch (Exception ex)

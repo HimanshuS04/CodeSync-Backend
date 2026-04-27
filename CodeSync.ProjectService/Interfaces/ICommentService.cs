@@ -9,7 +9,7 @@ namespace CodeSync.ProjectService.Interfaces
         Task<CommentResponseDto> ReplyAsync(
             Guid userId, ReplyCommentDto dto);
         Task<List<CommentResponseDto>> GetByFileAsync(
-            Guid fileId);
+            Guid fileId, Guid userId);
         Task ResolveAsync(Guid userId, int commentId);
         Task UnresolveAsync(Guid userId, int commentId);
         Task DeleteAsync(Guid userId, int commentId);
