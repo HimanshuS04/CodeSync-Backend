@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSync.ExecutionService",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSync.NotificationService", "CodeSync.NotificationService\CodeSync.NotificationService.csproj", "{244B3349-108C-4F73-B85D-380A27E54102}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSync.ApiGateway", "CodeSync.ApiGateway\CodeSync.ApiGateway.csproj", "{889DE28A-A0B3-4D9A-B907-02F34990A777}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{244B3349-108C-4F73-B85D-380A27E54102}.Release|x64.Build.0 = Release|Any CPU
 		{244B3349-108C-4F73-B85D-380A27E54102}.Release|x86.ActiveCfg = Release|Any CPU
 		{244B3349-108C-4F73-B85D-380A27E54102}.Release|x86.Build.0 = Release|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Debug|x64.Build.0 = Debug|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Debug|x86.Build.0 = Debug|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Release|x64.ActiveCfg = Release|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Release|x64.Build.0 = Release|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Release|x86.ActiveCfg = Release|Any CPU
+		{889DE28A-A0B3-4D9A-B907-02F34990A777}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
