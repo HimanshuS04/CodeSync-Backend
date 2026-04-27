@@ -26,5 +26,6 @@ namespace CodeSync.ProjectService.Interfaces
         Task<int> CountAllAsync();
         Task<int> CountPublicAsync();
         Task<int> CountAllFilesAsync();
+        Task<List<Project>> FindByMemberAsync(Guid userId);
     }
 }

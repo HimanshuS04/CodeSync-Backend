@@ -71,12 +71,23 @@ namespace CodeSync.ProjectService.Services
             return dto;
         }
 
-        public async Task<List<ProjectResponseDto>> GetMyProjectsAsync(
-            Guid userId)
+        public async Task<List<ProjectResponseDto>> GetMyProjectsAsync(Guid userId)
         {
-            // No cache - always fresh for own projects
-            var projects = await _repo.FindByOwnerIdAsync(userId);
-            return projects.Select(MapToDto).ToList();
+            // Get owned projects
+            var owned = await _repo.FindByOwnerIdAsync(userId);
+
+            // Get projects where user is member
+            var memberProjects = await _repo
+                .FindByMemberAsync(userId);
+
+            // Combine and remove duplicates
+            var allProjects = owned
+                .Union(memberProjects,
+                    new ProjectComparer())
+                .OrderByDescending(p => p.CreatedAt)
+                .ToList();
+
+            return allProjects.Select(MapToDto).ToList();
         }
 
         public async Task<List<ProjectResponseDto>> GetPublicProjectsAsync()
@@ -365,5 +376,13 @@ namespace CodeSync.ProjectService.Services
             CreatedAt = p.CreatedAt,
             UpdatedAt = p.UpdatedAt
         };
+        public class ProjectComparer : IEqualityComparer<Project>
+        {
+            public bool Equals(Project? x, Project? y)
+                => x?.ProjectId == y?.ProjectId;
+
+            public int GetHashCode(Project obj)
+                => obj.ProjectId.GetHashCode();
+        }
     }
 }

@@ -129,5 +129,10 @@ namespace CodeSync.ProjectService.Repositories
 
         public async Task<int> CountAllFilesAsync()
             => await _context.CodeFiles.CountAsync();
+        public async Task<List<Project>> FindByMemberAsync(Guid userId)
+            => await _context.Projects
+                .Where(p => p.Members
+                    .Any(m => m.UserId == userId))
+                .ToListAsync();
     }
 }
