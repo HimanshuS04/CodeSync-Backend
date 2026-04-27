@@ -11,5 +11,6 @@ namespace CodeSync.NotificationService.Interfaces
         Task<int> GetUnreadCountAsync(Guid userId);
         Task MarkReadAsync(Guid userId, int notificationId);
         Task MarkAllReadAsync(Guid userId);
+        Task BroadcastAsync(Guid actorId, BroadcastDto dto);
     }
 }

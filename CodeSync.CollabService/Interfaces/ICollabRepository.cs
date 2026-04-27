@@ -16,5 +16,6 @@ namespace CodeSync.CollabService.Interfaces
             Participant participant);
         Task<List<CollabSession>> FindActiveByProjectAsync(
             Guid projectId);
+        Task<List<CollabSession>> FindAllActiveAsync();
     }
 }

@@ -129,6 +129,28 @@ namespace CodeSync.CollabService.Controllers
                     new { message = ex.Message });
             }
         }
+        [HttpGet("admin/active")]
+        [Authorize]
+        public async Task<IActionResult> AdminActiveSessions()
+        {
+            try
+            {
+                var role = User.FindFirst(
+                    System.Security.Claims.ClaimTypes.Role)?.Value;
+                if (role != "ADMIN")
+                    return StatusCode(403,
+                        new { message = "Forbidden" });
+
+                var result = await _service
+                    .GetAllActiveSessionsAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message });
+            }
+        }
 
         private Guid GetUserId() => Guid.Parse(
             User.FindFirst(

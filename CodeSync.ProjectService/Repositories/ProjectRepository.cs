@@ -115,5 +115,19 @@ namespace CodeSync.ProjectService.Repositories
                 .Where(s => s.UserId == userId)
                 .Select(s => s.ProjectId)
                 .ToListAsync();
+        public async Task<List<Project>> GetAllAsync()
+            => await _context.Projects
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+
+        public async Task<int> CountAllAsync()
+            => await _context.Projects.CountAsync();
+
+        public async Task<int> CountPublicAsync()
+            => await _context.Projects
+                .CountAsync(p => p.Visibility == "PUBLIC");
+
+        public async Task<int> CountAllFilesAsync()
+            => await _context.CodeFiles.CountAsync();
     }
 }

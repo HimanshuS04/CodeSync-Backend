@@ -273,6 +273,77 @@ namespace CodeSync.ProjectService.Controllers
                     new { message = ex.Message });
             }
         }
+        // Admin - Get all projects
+        [HttpGet("admin/all")]
+        [Authorize]
+        public async Task<IActionResult> AdminGetAll()
+        {
+            try
+            {
+                var role = User.FindFirst(
+                    System.Security.Claims.ClaimTypes.Role)?.Value;
+                if (role != "ADMIN")
+                    return StatusCode(403,
+                        new { message = "Forbidden" });
+
+                var result = await _service
+                    .GetAllProjectsAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message });
+            }
+        }
+
+        // Admin - Delete any project
+        [HttpPost("admin/delete")]
+        [Authorize]
+        public async Task<IActionResult> AdminDelete(
+            [FromBody] ProjectIdDto dto)
+        {
+            try
+            {
+                var role = User.FindFirst(
+                    System.Security.Claims.ClaimTypes.Role)?.Value;
+                if (role != "ADMIN")
+                    return StatusCode(403,
+                        new { message = "Forbidden" });
+
+                await _service.AdminDeleteProjectAsync(
+                    dto.ProjectId);
+                return Ok(new { message = "Project deleted" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message });
+            }
+        }
+
+        // Admin - Get stats
+        [HttpGet("admin/stats")]
+        [Authorize]
+        public async Task<IActionResult> AdminStats()
+        {
+            try
+            {
+                var role = User.FindFirst(
+                    System.Security.Claims.ClaimTypes.Role)?.Value;
+                if (role != "ADMIN")
+                    return StatusCode(403,
+                        new { message = "Forbidden" });
+
+                var stats = await _service.GetStatsAsync();
+                return Ok(stats);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message });
+            }
+        }
 
         private Guid GetUserId() => Guid.Parse(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

@@ -91,6 +91,18 @@ namespace CodeSync.ExecutionService.Services
                 .FindByProjectAsync(projectId);
             return jobs.Select(MapToDto).ToList();
         }
+        public async Task<object> GetStatsAsync()
+        {
+            var total = await _repo.CountAllAsync();
+            var completed = await _repo.CountByStatusAsync("COMPLETED");
+            var failed = await _repo.CountByStatusAsync("FAILED");
+            return new
+            {
+                totalExecutions = total,
+                completedExecutions = completed,
+                failedExecutions = failed
+            };
+        }
 
         private static ExecutionResultDto MapToDto(
             ExecutionJob j) => new()
