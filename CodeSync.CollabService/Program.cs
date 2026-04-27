@@ -25,6 +25,7 @@ builder.Services.AddScoped<ICollabRepository,CollabRepository>();
 builder.Services.AddScoped<ICollabService,CollabServiceImpl>();
 builder.Services.AddHttpClient<NotificationClient>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHostedService<SessionCleanupService>();
 
 // 3. JWT
 var key = Encoding.UTF8.GetBytes(

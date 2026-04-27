@@ -66,5 +66,11 @@ namespace CodeSync.CollabService.Repositories
                     s.ProjectId == projectId
                     && s.Status == "ACTIVE")
                 .ToListAsync();
+        public async Task<List<CollabSession>>FindAllActiveAsync()
+            => await _context.CollabSessions
+                .Include(s => s.Participants)
+                .Where(s => s.Status == "ACTIVE")
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync();
     }
 }

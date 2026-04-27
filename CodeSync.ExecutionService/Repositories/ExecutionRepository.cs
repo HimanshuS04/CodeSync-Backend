@@ -41,5 +41,11 @@ namespace CodeSync.ExecutionService.Repositories
                 .OrderByDescending(j => j.CreatedAt)
                 .Take(20)
                 .ToListAsync();
+        public async Task<int> CountAllAsync()
+            => await _context.ExecutionJobs.CountAsync();
+
+        public async Task<int> CountByStatusAsync(string status)
+            => await _context.ExecutionJobs
+                .CountAsync(j => j.Status == status);
     }
 }

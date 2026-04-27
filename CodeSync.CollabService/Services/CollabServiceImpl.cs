@@ -267,6 +267,14 @@ namespace CodeSync.CollabService.Services
                 result.Add(await MapToDto(s));
             return result;
         }
+        public async Task<List<SessionResponseDto>> GetAllActiveSessionsAsync()
+        {
+            var sessions = await _repo.FindAllActiveAsync();
+            var result = new List<SessionResponseDto>();
+            foreach (var s in sessions)
+                result.Add(await MapToDto(s));
+            return result;
+        }
 
         private async Task<SessionResponseDto> MapToDto(
             CollabSession s)

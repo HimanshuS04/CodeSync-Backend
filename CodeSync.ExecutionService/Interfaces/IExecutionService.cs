@@ -7,7 +7,7 @@ namespace CodeSync.ExecutionService.Interfaces
         Task<ExecutionResultDto> RunCodeAsync(
             Guid userId, RunCodeDto dto);
         Task<ExecutionResultDto> GetResultAsync(int id);
-        Task<List<ExecutionResultDto>> GetByProjectAsync(
-            Guid projectId);
+        Task<List<ExecutionResultDto>> GetByProjectAsync(Guid projectId);
+        Task<object> GetStatsAsync();
     }
 }

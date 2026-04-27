@@ -66,6 +66,27 @@ namespace CodeSync.ExecutionService.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpGet("admin/stats")]
+        [Authorize]
+        public async Task<IActionResult> AdminStats()
+        {
+            try
+            {
+                var role = User.FindFirst(
+                    System.Security.Claims.ClaimTypes.Role)?.Value;
+                if (role != "ADMIN")
+                    return StatusCode(403,
+                        new { message = "Forbidden" });
+
+                var stats = await _service.GetStatsAsync();
+                return Ok(stats);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message });
+            }
+        }
 
         private Guid GetUserId() => Guid.Parse(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

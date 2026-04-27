@@ -58,6 +58,24 @@ namespace CodeSync.NotificationService.Services
 
         public async Task MarkAllReadAsync(Guid userId)
             => await _repo.MarkAllReadAsync(userId);
+        public async Task BroadcastAsync(
+            Guid actorId, BroadcastDto dto)
+        {
+            foreach (var recipientId in dto.RecipientIds)
+            {
+                var notification = new Notification
+                {
+                    RecipientId = recipientId,
+                    ActorId = actorId,
+                    Type = "ADMIN_BROADCAST",
+                    Title = dto.Title,
+                    Message = dto.Message,
+                    RelatedId = "",
+                    RelatedType = "BROADCAST"
+                };
+                await _repo.CreateAsync(notification);
+            }
+        }
 
         private static NotificationResponseDto MapToDto(
             Notification n) => new()

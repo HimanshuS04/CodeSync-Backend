@@ -106,7 +106,29 @@ namespace CodeSync.NotificationService.Controllers
                     new { message = ex.Message });
             }
         }
+        [HttpPost("admin/broadcast")]
+        [Authorize]
+        public async Task<IActionResult> Broadcast(
+            [FromBody] BroadcastDto dto)
+        {
+            try
+            {
+                var role = User.FindFirst(
+                    System.Security.Claims.ClaimTypes.Role)?.Value;
+                if (role != "ADMIN")
+                    return StatusCode(403,
+                        new { message = "Forbidden" });
 
+                var userId = GetUserId();
+                await _service.BroadcastAsync(userId, dto);
+                return Ok(new { message = "Broadcast sent" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message });
+            }
+        }
         private Guid GetUserId() => Guid.Parse(
             User.FindFirst(
                 ClaimTypes.NameIdentifier)!.Value);

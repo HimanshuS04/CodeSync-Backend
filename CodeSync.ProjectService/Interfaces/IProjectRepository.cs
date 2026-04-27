@@ -22,5 +22,10 @@ namespace CodeSync.ProjectService.Interfaces
         Task AddStarAsync(StarredProject star);
         Task RemoveStarAsync(StarredProject star);
         Task<List<Guid>> GetStarredProjectIdsAsync(Guid userId);
+        Task<List<Project>> GetAllAsync();
+        Task<int> CountAllAsync();
+        Task<int> CountPublicAsync();
+        Task<int> CountAllFilesAsync();
+        Task<List<Project>> FindByMemberAsync(Guid userId);
     }
 }
