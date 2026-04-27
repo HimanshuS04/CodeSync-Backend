@@ -214,6 +214,28 @@ namespace CodeSync.ProjectService.Services
 
             await _repo.RemoveMemberAsync(projectId, userId);
         }
+        public async Task<string> GetUserRoleAsync(Guid projectId, Guid userId)
+        {
+            var project = await _repo.FindByIdAsync(projectId)
+                ?? throw new Exception("Project not found");
+
+            // Owner
+            if (project.OwnerId == userId)
+                return "OWNER";
+
+            // Check membership
+            var member = await _repo.FindMemberAsync(
+                projectId, userId);
+
+            if (member != null)
+                return member.Role;
+
+            // Public project - read only
+            if (project.Visibility == "PUBLIC")
+                return "VIEWER";
+
+            return "NONE";
+        }
 
         private static ProjectResponseDto MapToDto(Project p) => new()
         {

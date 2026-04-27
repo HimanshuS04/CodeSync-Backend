@@ -221,6 +221,24 @@ namespace CodeSync.ProjectService.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        // POST /api/projects/check-access
+        [HttpPost("check-access")]
+        [Authorize]
+        public async Task<IActionResult> CheckAccess(
+            [FromBody] ProjectIdDto dto)
+        {
+            try
+            {
+                var userId = GetUserId();
+                var role = await _service
+                    .GetUserRoleAsync(dto.ProjectId, userId);
+                return Ok(new { role });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         private Guid GetUserId() => Guid.Parse(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

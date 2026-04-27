@@ -1,6 +1,0 @@
-@CodeSync.CollabService_HostAddress = http://localhost:5201
-
-GET {{CodeSync.CollabService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
