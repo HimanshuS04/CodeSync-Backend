@@ -13,6 +13,7 @@ namespace CodeSync.ProjectService.Data
         public DbSet<ProjectMember> ProjectMembers { get; set; }
         public DbSet<StarredProject> StarredProjects { get; set; }
         public DbSet<CodeFile> CodeFiles { get; set; }
+        public DbSet<Snapshot> Snapshots { get; set; }
 
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
@@ -57,6 +58,12 @@ namespace CodeSync.ProjectService.Data
                       .OnDelete(DeleteBehavior.Cascade);
                 // Soft delete filter
                 entity.HasQueryFilter(f => !f.IsDeleted);
+            });
+            modelBuilder.Entity<Snapshot>(entity =>
+            {
+                entity.HasKey(s => s.Id);
+                entity.HasIndex(s => s.FileId);
+                entity.HasIndex(s => s.ProjectId);
             });
         }
     }
