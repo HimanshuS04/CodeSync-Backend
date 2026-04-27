@@ -12,6 +12,7 @@ namespace CodeSync.ProjectService.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectMember> ProjectMembers { get; set; }
         public DbSet<StarredProject> StarredProjects { get; set; }
+        public DbSet<CodeFile> CodeFiles { get; set; }
 
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
@@ -42,6 +43,20 @@ namespace CodeSync.ProjectService.Data
                       .OnDelete(DeleteBehavior.Cascade);
                 entity.HasIndex(s =>
                     new { s.ProjectId, s.UserId }).IsUnique();
+            });
+
+            modelBuilder.Entity<CodeFile>(entity =>
+            {
+                entity.HasKey(f => f.FileId);
+                entity.HasIndex(f => f.ProjectId);
+                entity.HasIndex(f =>
+                    new { f.ProjectId, f.Path }).IsUnique();
+                entity.HasOne(f => f.Project)
+                      .WithMany()
+                      .HasForeignKey(f => f.ProjectId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                // Soft delete filter
+                entity.HasQueryFilter(f => !f.IsDeleted);
             });
         }
     }
