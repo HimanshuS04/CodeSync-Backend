@@ -14,6 +14,7 @@ namespace CodeSync.ProjectService.Data
         public DbSet<StarredProject> StarredProjects { get; set; }
         public DbSet<CodeFile> CodeFiles { get; set; }
         public DbSet<Snapshot> Snapshots { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
@@ -64,6 +65,16 @@ namespace CodeSync.ProjectService.Data
                 entity.HasKey(s => s.Id);
                 entity.HasIndex(s => s.FileId);
                 entity.HasIndex(s => s.ProjectId);
+            });
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.HasKey(c => c.Id);
+                entity.HasIndex(c => c.FileId);
+                entity.HasIndex(c => c.ProjectId);
+                entity.HasOne(c => c.ParentComment)
+                    .WithMany(c => c.Replies)
+                    .HasForeignKey(c => c.ParentCommentId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
