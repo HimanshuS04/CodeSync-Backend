@@ -52,7 +52,9 @@ namespace CodeSync.ProjectService.Data
                 entity.HasKey(f => f.FileId);
                 entity.HasIndex(f => f.ProjectId);
                 entity.HasIndex(f =>
-                    new { f.ProjectId, f.Path }).IsUnique();
+                    new { f.ProjectId, f.Path })
+                    .IsUnique()
+                    .HasFilter("\"IsDeleted\" = false");
                 entity.HasOne(f => f.Project)
                       .WithMany()
                       .HasForeignKey(f => f.ProjectId)

@@ -52,11 +52,18 @@ namespace CodeSync.ProjectService.Repositories
             => await _context.CodeFiles
                 .AnyAsync(f =>
                     f.ProjectId == projectId
-                    && f.Path == path);
+                    && f.Path == path
+                    && !f.IsDeleted);
 
         public async Task<int> CountByProjectAsync(
             Guid projectId)
             => await _context.CodeFiles
                 .CountAsync(f => f.ProjectId == projectId);
+    
+        public async Task<CodeFile?> FindByIdIncludeDeletedAsync(
+        Guid fileId)
+        => await _context.CodeFiles
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(f => f.FileId == fileId);
     }
 }

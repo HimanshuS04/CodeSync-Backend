@@ -125,20 +125,11 @@ namespace CodeSync.ProjectService.Services
             await _fileRepo.UpdateAsync(file);
         }
 
-        public async Task RestoreFileAsync(
-            Guid userId, Guid fileId)
+        public async Task RestoreFileAsync(Guid userId, Guid fileId)
         {
-            var file = await _fileRepo.FindByIdAsync(fileId)
+            var file = await _fileRepo
+                .FindByIdIncludeDeletedAsync(fileId)
                 ?? throw new Exception("File not found");
-
-            // Only owner can restore
-            var project = await _projectRepo
-                .FindByIdAsync(file.ProjectId)
-                ?? throw new Exception("Project not found");
-
-            if (project.OwnerId != userId)
-                throw new Exception(
-                    "Only owner can restore files");
 
             file.IsDeleted = false;
             file.LastEditedBy = userId;
