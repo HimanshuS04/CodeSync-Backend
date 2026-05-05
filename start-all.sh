@@ -26,37 +26,37 @@ sleep 2
 echo -e "${BLUE}Starting AuthService on port 5001...${NC}"
 cd "$BASE_DIR/CodeSync.AuthService"
 dotnet run &
-sleep 3
+sleep 1
 
 # Start ProjectService (Port 5002)
 echo -e "${BLUE}Starting ProjectService on port 5002...${NC}"
 cd "$BASE_DIR/CodeSync.ProjectService"
 dotnet run &
-sleep 3
+sleep 1
 
 # Start CollabService (Port 5003)
 echo -e "${BLUE}Starting CollabService on port 5003...${NC}"
 cd "$BASE_DIR/CodeSync.CollabService"
 dotnet run &
-sleep 3
+sleep 1
 
 # Start ExecutionService (Port 5004)
 echo -e "${BLUE}Starting ExecutionService on port 5004...${NC}"
 cd "$BASE_DIR/CodeSync.ExecutionService"
 dotnet run &
-sleep 3
+sleep 1
 
 # Start NotificationService (Port 5005)
 echo -e "${BLUE}Starting NotificationService on port 5005...${NC}"
 cd "$BASE_DIR/CodeSync.NotificationService"
 dotnet run &
-sleep 3
+sleep 1
 
 # Start API Gateway (Port 5000)
 echo -e "${BLUE}Starting API Gateway on port 5000...${NC}"
 cd "$BASE_DIR/CodeSync.ApiGateway"
 dotnet run &
-sleep 3
+sleep 1
 
 echo ""
 echo "========================================="

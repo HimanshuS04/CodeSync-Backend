@@ -13,5 +13,6 @@ namespace CodeSync.ProjectService.Interfaces
         Task<bool> ExistsAsync(
             Guid projectId, string path);
         Task<int> CountByProjectAsync(Guid projectId);
+        Task<CodeFile?> FindByIdIncludeDeletedAsync(Guid fileId);
     }
 }
