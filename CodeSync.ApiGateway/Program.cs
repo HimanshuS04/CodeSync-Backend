@@ -3,23 +3,35 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load ocelot config based on environment
 builder.Configuration.AddJsonFile(
-    "ocelot.json", optional: false, reloadOnChange: true);
+    "ocelot.json",
+    optional: false,
+    reloadOnChange: true);
+
+builder.Configuration.AddJsonFile(
+    $"ocelot.{builder.Environment.EnvironmentName}.json",
+    optional: true,
+    reloadOnChange: true);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials());
+    options.AddPolicy("AllowAll", policy =>
+        policy.WithOrigins(
+            "http://localhost:4200",
+            "https://codesync-frontend.vercel.app",
+            "https://codesync-frontend.netlify.app"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
 });
 
 builder.Services.AddOcelot();
 
 var app = builder.Build();
 
-app.UseCors("AllowAngular");
+app.UseCors("AllowAll");
 
 await app.UseOcelot();
 
