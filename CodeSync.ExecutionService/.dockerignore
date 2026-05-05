@@ -1,0 +1,6 @@
+bin/
+obj/
+Migrations/
+*.user
+.vs/
+.vscode/
