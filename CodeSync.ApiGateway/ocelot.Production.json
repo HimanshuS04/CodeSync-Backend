@@ -92,6 +92,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://REPLACE_GATEWAY_URL.onrender.com"
+    "BaseUrl": "https://codesync-gateway.onrender.com"
   }
 }
