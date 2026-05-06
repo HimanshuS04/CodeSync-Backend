@@ -31,6 +31,19 @@ builder.Services.AddOcelot();
 var app = builder.Build();
 
 app.UseCors("AllowAll");
+// Health check endpoint
+app.MapGet("/", () => Results.Ok(new
+{
+    status = "healthy",
+    service = "CodeSync API Gateway",
+    timestamp = DateTime.UtcNow
+}));
+
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy"
+}));
+
 
 await app.UseOcelot();
 
