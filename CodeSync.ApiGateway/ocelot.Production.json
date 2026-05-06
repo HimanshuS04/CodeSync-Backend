@@ -85,7 +85,7 @@
       "DownstreamPathTemplate": "/api/notifications/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
-        { "Host": "codesync-notification.onrender.com", "Port": 443 }
+        { "Host": "codesync-notification-service.onrender.com", "Port": 443 }
       ],
       "UpstreamPathTemplate": "/api/notifications/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
