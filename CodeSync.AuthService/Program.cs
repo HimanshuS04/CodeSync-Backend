@@ -89,6 +89,12 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    service = "CodeSync Auth Service",
+    timestamp = DateTime.UtcNow
+}));
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
