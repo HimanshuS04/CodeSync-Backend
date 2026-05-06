@@ -3,7 +3,6 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load ocelot config based on environment
 builder.Configuration.AddJsonFile(
     "ocelot.json",
     optional: false,
@@ -17,14 +16,13 @@ builder.Configuration.AddJsonFile(
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
-        policy.WithOrigins(
-            "http://localhost:4200",
-            "https://codesync-frontend.vercel.app",
-            "https://codesync-frontend.netlify.app"
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials());
+        policy
+            .WithOrigins(
+                "http://localhost:4200",
+                "https://code-sync-frontend-tau.vercel.app")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
 
 builder.Services.AddOcelot();
@@ -32,6 +30,21 @@ builder.Services.AddOcelot();
 var app = builder.Build();
 
 app.UseCors("AllowAll");
+
+app.MapMethods("/",
+    new[] { "GET", "HEAD" },
+    () => Results.Ok(new
+    {
+        status = "healthy",
+        service = "CodeSync API Gateway"
+    }));
+
+app.MapMethods("/health",
+    new[] { "GET", "HEAD" },
+    () => Results.Ok(new
+    {
+        status = "healthy"
+    }));
 
 await app.UseOcelot();
 

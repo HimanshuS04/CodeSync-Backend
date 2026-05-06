@@ -78,10 +78,13 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials());
+        policy.WithOrigins(
+            "http://localhost:4200",
+            "https://code-sync-frontend-tau.vercel.app"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
 });
 
 // 6. Controllers + Swagger
@@ -128,6 +131,12 @@ app.UseSwaggerUI();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    service = "CodeSync Collab Service",
+    timestamp = DateTime.UtcNow
+}));
 app.MapControllers();
 
 // Map SignalR Hub

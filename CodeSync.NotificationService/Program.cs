@@ -101,6 +101,12 @@ app.UseSwaggerUI();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    service = "CodeSync Notification Service",
+    timestamp = DateTime.UtcNow
+}));
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
