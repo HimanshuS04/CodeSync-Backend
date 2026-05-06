@@ -131,6 +131,12 @@ app.UseSwaggerUI();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    service = "CodeSync Collab Service",
+    timestamp = DateTime.UtcNow
+}));
 app.MapControllers();
 
 // Map SignalR Hub
