@@ -19,8 +19,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
         policy.WithOrigins(
             "http://localhost:4200",
-            "https://code-sync-frontend-tau.vercel.app",
-            "https://code-sync-frontend-1o1aoj9ao-himanshus04s-projects.vercel.app"
+            "https://code-sync-frontend-tau.vercel.app"
         )
         .AllowAnyHeader()
         .AllowAnyMethod()

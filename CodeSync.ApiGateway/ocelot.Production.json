@@ -92,16 +92,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://codesync-gateway.onrender.com",
-    "RequestIdKey": "OcRequestId",
-    "UpstreamPathTemplate": "/",
-    "ServiceDiscoveryProvider": {
-      "Type": "ServiceFabric"
-    },
-    "QoSOptions": {
-      "ExceptionsAllowedBeforeBreaking": 3,
-      "DurationOfBreak": 5000,
-      "TimeoutValue": 30000
-    }
+    "BaseUrl": "https://codesync-gateway.onrender.com"
   }
 }

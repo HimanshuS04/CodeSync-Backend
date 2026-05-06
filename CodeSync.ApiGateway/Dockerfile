@@ -11,8 +11,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out ./
 
-COPY ocelot.json ./
-COPY ocelot.Production.json ./
+COPY --from=build /app/ocelot.json ./
+COPY --from=build /app/ocelot.Production.json ./
 
 ENV ASPNETCORE_URLS=http://+:10000
 ENV ASPNETCORE_ENVIRONMENT=Production
