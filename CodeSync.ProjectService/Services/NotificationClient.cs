@@ -1,9 +1,10 @@
 using System.Text;
 using System.Text.Json;
+using CodeSync.ProjectService.Interfaces;
 
 namespace CodeSync.ProjectService.Services
 {
-    public class NotificationClient
+    public class NotificationClient : INotificationClient
     {
         public readonly HttpClient _http;
         private readonly string _baseUrl;
@@ -33,5 +34,18 @@ namespace CodeSync.ProjectService.Services
                 // do not break main flow if notification fails
             }
         }
+        public async Task<HttpResponseMessage> GetAsync(string url)
+        {
+            try
+            {
+                return await _http.GetAsync(url);
+            }
+            catch
+            {
+                return new HttpResponseMessage(
+                    System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+        
     }
 }

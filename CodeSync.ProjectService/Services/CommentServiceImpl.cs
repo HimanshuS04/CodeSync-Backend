@@ -8,12 +8,12 @@ namespace CodeSync.ProjectService.Services
     {
         private readonly ICommentRepository _repo;
         private readonly IProjectRepository _projectRepo;
-        private readonly NotificationClient _notificationClient;
+        private readonly INotificationClient _notificationClient;
 
         public CommentServiceImpl(
             ICommentRepository repo,
             IProjectRepository projectRepo,
-            NotificationClient notificationClient)
+            INotificationClient notificationClient)
         {
             _repo = repo;
             _projectRepo = projectRepo;

@@ -1,4 +1,5 @@
 using CodeSync.CollabService.Data;
+using CodeSync.CollabService.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeSync.CollabService.Services
@@ -6,12 +7,12 @@ namespace CodeSync.CollabService.Services
     public class SessionCleanupService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly RedisService _redis;
+        private readonly IRedisService _redis;
         private readonly ILogger<SessionCleanupService> _logger;
 
         public SessionCleanupService(
             IServiceScopeFactory scopeFactory,
-            RedisService redis,
+            IRedisService redis,
             ILogger<SessionCleanupService> logger)
         {
             _scopeFactory = scopeFactory;

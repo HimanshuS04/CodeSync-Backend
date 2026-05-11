@@ -12,13 +12,13 @@ namespace CodeSync.ProjectService.Services
         private readonly IFileRepository _fileRepo;
 
         private readonly IProjectRepository _projectRepo;
-        private readonly NotificationClient _notificationClient;
+        private readonly INotificationClient _notificationClient;
 
         public VersionServiceImpl(
             ISnapshotRepository snapshotRepo,
             IFileRepository fileRepo,
             IProjectRepository projectRepo,
-            NotificationClient notificationClient)
+            INotificationClient notificationClient)
         {
             _snapshotRepo = snapshotRepo;
             _fileRepo = fileRepo;

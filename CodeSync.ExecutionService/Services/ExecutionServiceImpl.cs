@@ -8,11 +8,11 @@ namespace CodeSync.ExecutionService.Services
     public class ExecutionServiceImpl : IExecutionService
     {
         private readonly IExecutionRepository _repo;
-        private readonly Judge0Client _judge0;
+        private readonly IJudge0Client _judge0;
 
         public ExecutionServiceImpl(
             IExecutionRepository repo,
-            Judge0Client judge0)
+            IJudge0Client judge0)
         {
             _repo = repo;
             _judge0 = judge0;
@@ -21,11 +21,7 @@ namespace CodeSync.ExecutionService.Services
         public async Task<ExecutionResultDto> RunCodeAsync(
             Guid userId, RunCodeDto dto)
         {
-            // Get Judge0 language ID
-            var langId = Judge0LanguageMapper
-                .GetLanguageId(dto.Language);
-
-            // Create job record
+            // Create job first
             var job = new ExecutionJob
             {
                 ProjectId = dto.ProjectId,
@@ -36,15 +32,18 @@ namespace CodeSync.ExecutionService.Services
                 Stdin = dto.Stdin,
                 Status = "RUNNING"
             };
+
             await _repo.CreateAsync(job);
 
             try
             {
-                // Submit to Judge0 and wait
+                // Get language ID inside try-catch
+                var langId = Judge0LanguageMapper
+                    .GetLanguageId(dto.Language);
+
                 var result = await _judge0.SubmitAndWait(
                     langId, dto.SourceCode, dto.Stdin);
 
-                // Map status
                 job.Status = result.StatusId switch
                 {
                     3 => "COMPLETED",
@@ -59,7 +58,8 @@ namespace CodeSync.ExecutionService.Services
                 job.CompileOutput = result.CompileOutput;
 
                 if (result.Time != null &&
-                    double.TryParse(result.Time, out var time))
+                    double.TryParse(result.Time,
+                        out var time))
                     job.ExecutionTimeMs = (int)(time * 1000);
 
                 job.MemoryUsedKb = result.Memory;

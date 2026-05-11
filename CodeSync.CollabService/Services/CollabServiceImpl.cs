@@ -8,15 +8,15 @@ namespace CodeSync.CollabService.Services
     public class CollabServiceImpl : ICollabService
     {
         private readonly ICollabRepository _repo;
-        private readonly RedisService _redis;
-        private readonly NotificationClient _notificationClient;
+        private readonly IRedisService _redis;
+        private readonly INotificationClient _notificationClient;
 
         private readonly IHttpContextAccessor _httpContext;
 
         public CollabServiceImpl(
             ICollabRepository repo,
-            RedisService redis,
-            NotificationClient notificationClient,
+            IRedisService redis,
+            INotificationClient notificationClient,
             IHttpContextAccessor httpContext)
         {
             _repo = repo;
@@ -88,7 +88,7 @@ namespace CodeSync.CollabService.Services
             try
             {
                 var projectResponse = await _notificationClient
-                    ._http.SendAsync(new HttpRequestMessage(
+                    .SendAsync(new HttpRequestMessage(
                         HttpMethod.Get,
                         $"http://localhost:5002/api/projects/{dto.ProjectId}")
                     {

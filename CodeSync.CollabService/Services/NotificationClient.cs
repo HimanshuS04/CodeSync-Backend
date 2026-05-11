@@ -1,9 +1,10 @@
 using System.Text;
 using System.Text.Json;
+using CodeSync.CollabService.Interfaces;
 
 namespace CodeSync.CollabService.Services
 {
-    public class NotificationClient
+    public class NotificationClient:INotificationClient
     {
         public readonly HttpClient _http;
         private readonly string _notifUrl;
@@ -33,10 +34,20 @@ namespace CodeSync.CollabService.Services
             }
             catch { }
         }
-
-        public async Task<List<ProjectMemberInfo>>
-            GetProjectMembersAsync(
-                Guid projectId, string authHeader)
+        public async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request)
+        {
+            try
+            {
+                return await _http.SendAsync(request);
+            }
+            catch
+            {
+                return new HttpResponseMessage(
+                    System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+        public async Task<List<ProjectMemberInfo>> GetProjectMembersAsync(Guid projectId, string authHeader)
         {
             try
             {
@@ -66,7 +77,6 @@ namespace CodeSync.CollabService.Services
             }
         }
     }
-
     public class ProjectMemberInfo
     {
         public Guid UserId { get; set; }

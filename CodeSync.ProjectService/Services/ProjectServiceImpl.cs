@@ -8,14 +8,14 @@ namespace CodeSync.ProjectService.Services
     {
         private readonly IProjectRepository _repo;
         private readonly ICacheService _cache;
-        private readonly NotificationClient _notificationClient;
+        private readonly INotificationClient _notificationClient;
 
         private const string PublicProjectsKey = "projects:public";
 
         public ProjectServiceImpl(
             IProjectRepository repo,
             ICacheService cache,
-            NotificationClient notificationClient)
+            INotificationClient notificationClient)
         {
             _repo = repo;
             _cache = cache;
@@ -273,7 +273,7 @@ namespace CodeSync.ProjectService.Services
             try
             {
                 var response = await _notificationClient
-                    ._http.GetAsync(
+                    .GetAsync(
                         $"http://localhost:5001/api/auth/search?q={username}");
 
                 if (!response.IsSuccessStatusCode)

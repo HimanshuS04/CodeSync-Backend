@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
-
+using CodeSync.ExecutionService.Interfaces;
 namespace CodeSync.ExecutionService.Services
 {
-    public class Judge0Client
+    public class Judge0Client:IJudge0Client
     {
         private readonly HttpClient _http;
         private readonly string _apiKey;

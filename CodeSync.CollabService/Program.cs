@@ -19,11 +19,11 @@ builder.Services.AddDbContext<CollabDbContext>(options =>
             .GetConnectionString("DefaultConnection")));
 
 // 2. Redis + Services
-builder.Services.AddSingleton<RedisService>();
+builder.Services.AddSingleton<IRedisService, RedisService>();
 builder.Services.AddSingleton<OTService>();
 builder.Services.AddScoped<ICollabRepository,CollabRepository>();
 builder.Services.AddScoped<ICollabService,CollabServiceImpl>();
-builder.Services.AddHttpClient<NotificationClient>();
+builder.Services.AddHttpClient<INotificationClient, NotificationClient>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<SessionCleanupService>();
 

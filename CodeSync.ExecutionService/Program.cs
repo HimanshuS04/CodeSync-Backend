@@ -21,8 +21,7 @@ builder.Services.AddScoped<IExecutionRepository,
     ExecutionRepository>();
 builder.Services.AddScoped<IExecutionService,
     ExecutionServiceImpl>();
-builder.Services.AddSingleton<Judge0Client>();
-
+builder.Services.AddSingleton<IJudge0Client, Judge0Client>();
 // 3. JWT - Authorize only
 var key = Encoding.UTF8.GetBytes(
     builder.Configuration["JwtSettings:SecretKey"]!);

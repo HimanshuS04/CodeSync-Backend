@@ -1,9 +1,9 @@
 using StackExchange.Redis;
 using System.Text.Json;
-
+using CodeSync.CollabService.Interfaces;
 namespace CodeSync.CollabService.Services
 {
-    public class RedisService
+    public class RedisService:IRedisService
     {
         private readonly IDatabase _db;
 
